@@ -22,6 +22,7 @@ public class MainActivity extends FragmentActivity {
     PagerSlidingTabStrip tabs;
     Toolbar toolbar;
     TextView[] textview;
+    int number=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
