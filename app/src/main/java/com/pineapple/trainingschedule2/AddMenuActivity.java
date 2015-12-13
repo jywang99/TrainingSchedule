@@ -104,6 +104,14 @@ public class AddMenuActivity extends ActionBarActivity {
                     }
                 },
                 hour,minute,true);
+        dialog.setTitle("開始時刻");
+        dialog.setButton("決定",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
         dialog.show();
     }
 

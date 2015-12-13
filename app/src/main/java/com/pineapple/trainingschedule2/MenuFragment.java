@@ -21,6 +21,10 @@ public class MenuFragment extends Fragment {
 
     int position;
 
+    private static final String[] menues = {
+            "a","b","c"
+    };
+
     public static MenuFragment newInstance(int position) {
 
         MenuFragment f = new MenuFragment();
@@ -35,15 +39,10 @@ public class MenuFragment extends Fragment {
         super.onCreate(savedInstanceState);
         position = getArguments().getInt("position");
 
-        /*ListView listView = (ListView)getActivity().findViewById(R.id.listView);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, menues);
+        ListView listView = (ListView) getActivity().findViewById(R.id.listView);
+        listView.setAdapter(arrayAdapter);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
-        SharedPreferences pref = getActivity().getSharedPreferences("trainingmenu", Context.MODE_PRIVATE);
-        int times = pref.getInt("times",0);
-        String times1 = String.valueOf(times);
-        //adapter.add(times1);
-        adapter.add("aaa");
-        listView.setAdapter(adapter);*/
     }
 
     @Override
@@ -60,11 +59,6 @@ public class MenuFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-
-
-
-
 
         return view;
     }

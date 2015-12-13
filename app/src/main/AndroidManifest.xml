@@ -19,9 +19,6 @@
         <activity
             android:name=".AddMenuActivity"
             android:label="@string/title_activity_add_menu"></activity>
-        <activity
-            android:name=".EditScheduleActivity"
-            android:label="EditScheduleActivity"></activity>
 
     </application>
 
