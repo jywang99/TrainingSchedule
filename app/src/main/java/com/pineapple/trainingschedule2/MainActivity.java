@@ -10,10 +10,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.pineapple.trainingschedule2.R;
 
+import android.database.sqlite.SQLiteOpenHelper;
 
 public class MainActivity extends FragmentActivity {
 
@@ -22,25 +25,24 @@ public class MainActivity extends FragmentActivity {
     PagerSlidingTabStrip tabs;
     Toolbar toolbar;
     TextView[] textview;
-    int number=0;
+    int number = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        pager = (ViewPager)findViewById(R.id.pager);
+        pager = (ViewPager) findViewById(R.id.pager);
         adapter = new MyPagerAdapter(getSupportFragmentManager());
-        tabs = (PagerSlidingTabStrip)findViewById(R.id.tabs);
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         toolbar.setTitle("Training Schedule");
         toolbar.setTitleTextColor(Color.WHITE);
 
         pager.setAdapter(adapter);
         tabs.setViewPager(pager);
-
-
     }
 }
+
 

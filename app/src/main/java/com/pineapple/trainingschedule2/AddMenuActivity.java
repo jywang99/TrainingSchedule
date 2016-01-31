@@ -3,10 +3,13 @@ package com.pineapple.trainingschedule2;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,7 +33,9 @@ public class AddMenuActivity extends ActionBarActivity {
     int b;
     EditText menuname;
     EditText memo;
-
+    SQLiteDatabase db;
+    static final String TABLE_NAME = "TrainingMenu";
+    SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,7 @@ public class AddMenuActivity extends ActionBarActivity {
         memo = (EditText) findViewById(R.id.memo);
         menuname = (EditText) findViewById(R.id.name);
         b = 0;
+
     }
 
 
@@ -97,13 +103,15 @@ public class AddMenuActivity extends ActionBarActivity {
         int minute = calendar.get(Calendar.MINUTE);
         TimePickerDialog dialog = new TimePickerDialog(
                 this,
-                new TimePickerDialog.OnTimeSetListener(){
+                new TimePickerDialog.OnTimeSetListener() {
                     @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay,int minute) {
-                        Log.d("test", String.format("%02d:%02d", hourOfDay,minute));
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+//                        doAddEntry(db,11,11);
+
+                        /*Log.d("test", String.format("%02d:%02d", hourOfDay,minute));*/
                     }
                 },
-                hour,minute,true);
+                hour, minute, true);
         dialog.setTitle("開始時刻");
         dialog.setButton("決定",
                 new DialogInterface.OnClickListener() {
@@ -115,26 +123,83 @@ public class AddMenuActivity extends ActionBarActivity {
         dialog.show();
     }
 
-    public void weeklyschedule(View V){
-        final CharSequence[]chkItems = {"月曜日","火曜日","水曜日","木曜日","金曜日","土曜日","日曜日"};
-        final boolean[] chkSts = {false,false,false,false,false,false,false};
+    public void weeklyschedule(View V) {
+        final CharSequence[] chkItems = {"月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日", "日曜日"};
+        final boolean[] chkSts = {false, false, false, false, false, false, false};
         AlertDialog.Builder checkDlg = new AlertDialog.Builder(this);
         checkDlg.setTitle("曜日選択");
 
         checkDlg.setMultiChoiceItems(
                 chkItems,
                 chkSts,
-                new DialogInterface.OnMultiChoiceClickListener(){
-                    public void onClick(DialogInterface dialog,int which,boolean flag){
+                new DialogInterface.OnMultiChoiceClickListener() {
+                    public void onClick(DialogInterface dialog, int which, boolean flag) {
 
                     }
                 });
         checkDlg.setPositiveButton("決定",
-                new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int which){
-
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        int hour = 1;
+                        int min = 1;
+                        insert("a", hour, min, 1, 3);
+                        String b = search(1);
+                        Log.e("TAG",b);
                     }
                 });
         checkDlg.create().show();
+    }
+
+    //    private void doAddEntry (int hour, int min){
+//        hour = 1;
+//        min = 1;
+//
+//
+//    }
+    public void insert(String name, int hr, int min, int times, int date) {
+        ContentValues val = new ContentValues();
+        val.put("name", name);
+        val.put("hr", hr);
+        val.put("min", min);
+        val.put("times", times);
+        val.put("date", date);
+        db.insert(TABLE_NAME, null, val);
+        pref = getSharedPreferences("idnum", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        int a = pref.getInt("idnum", 0);
+        a++;
+        editor.putInt("idnum", a);
+        editor.commit();
+    }
+    public String search(int idnum) {
+        Cursor cursor = null;
+        String result = "";
+
+        try {
+            cursor = db.query(TABLE_NAME,
+                    new String[]{"name", "hr", "min", "times", "date"},
+                    "id = ?", new String[]{"" + idnum},
+                    null, null, null);
+
+            int indexName = cursor.getColumnIndex("name");
+            int indexHr = cursor.getColumnIndex("hr");
+            int indexMin = cursor.getColumnIndex("min");
+            int indexTimes = cursor.getColumnIndex("times");
+            int indexDate = cursor.getColumnIndex("date");
+
+            while (cursor.moveToNext()) {
+                String name = cursor.getString(indexName);
+                int hr = cursor.getInt(indexHr);
+                int min = cursor.getInt(indexMin);
+                int times = cursor.getInt(indexTimes);
+                int date = cursor.getInt(indexDate);
+                result += date + "の" + hr + "時" + min + "分" + "から、" + name + "を" + times + "回やる！";
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return result;
     }
 }
