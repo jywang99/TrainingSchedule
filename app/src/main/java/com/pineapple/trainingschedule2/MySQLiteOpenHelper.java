@@ -15,7 +15,11 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
 
     int number;
 
-    static final String CREATE_TABLE = "create table" + TABLE_NAME + "(id integer primary key autoincrement not null, name text not null, hr integer, min integer, date integer, times integer)";
+    static final String CREATE_TABLE = "create table" + TABLE_NAME +
+            "(id integer primary key autoincrement not null, name text not null," +
+            " hr integer, min integer, date integer, times integer, memo integer," +
+            " monday integer, tuesday integer, wednesday integer, thursday integer, " +
+            "friday integer, saturday integer, sunday integer)";
 
     public MySQLiteOpenHelper(Context context) {
         super(context, DB, null, DB_VERSION);
@@ -26,7 +30,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
         Log.e("TAG", CREATE_TABLE);
     }
 
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
     }
 }

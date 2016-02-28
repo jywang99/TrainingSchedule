@@ -28,14 +28,25 @@ public class AddMenuActivity extends ActionBarActivity {
 
     Button button2;
     Button button3;
-    Button button;
     TextView a;
-    int b;
-    EditText menuname;
-    EditText memo;
+    int b = 0;
+    EditText menuinput;
+    EditText memoinput;
     SQLiteDatabase db;
     static final String TABLE_NAME = "TrainingMenu";
     SharedPreferences pref;
+    String timeString;
+    int hr;
+    int min;
+    int monday;
+    int tuesday;
+    int wednesday;
+    int thursday;
+    int friday;
+    int saturday;
+    int sunday;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +55,9 @@ public class AddMenuActivity extends ActionBarActivity {
         button2 = (Button) findViewById(R.id.button2);
         button3 = (Button) findViewById(R.id.button3);
         a = (TextView) findViewById(R.id.textView47);
-        memo = (EditText) findViewById(R.id.memo);
-        menuname = (EditText) findViewById(R.id.name);
+        memoinput = (EditText) findViewById(R.id.memo);
+        menuinput = (EditText) findViewById(R.id.name);
         b = 0;
-
     }
 
 
@@ -78,23 +88,28 @@ public class AddMenuActivity extends ActionBarActivity {
     public void decrease(View V) {
         if (b > 0) {
             b--;
-            a.setText(" " + b + "回");
+            a.setText(String.valueOf(b));
         }
     }
 
     public void increase(View V) {
         b++;
-        a.setText(" " + b + "回");
+        a.setText(String.valueOf(b));
     }
 
     public void commit(View v) {
+        String name = menuinput.getText().toString();
+        String memo = memoinput.getText().toString();
+        String t = a.getText().toString();
+        int times = Integer.parseInt(t.substring(0,1));
+        insert(name, hr, min, times, memo, monday, tuesday, wednesday, thursday, friday, saturday, sunday);
         finish();
-        SharedPreferences pref = getSharedPreferences("trainingmenu", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("times", b);
-        editor.putString("name", menuname.getText().toString());
-        editor.putString("memo", memo.getText().toString());
-        editor.commit();
+//        SharedPreferences pref = getSharedPreferences("trainingmenu", Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = pref.edit();
+//        editor.putInt("times", b);
+//        editor.putString("name", menuname.getText().toString());
+//        editor.putString("memo", memo.getText().toString());
+//        editor.commit();
     }
 
     public void editschedule(View V) {
@@ -107,8 +122,9 @@ public class AddMenuActivity extends ActionBarActivity {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 //                        doAddEntry(db,11,11);
-
-                        /*Log.d("test", String.format("%02d:%02d", hourOfDay,minute));*/
+                        timeString = String.format("%02d:%02d", hourOfDay, minute);
+                        hr = Integer.parseInt(timeString.substring(0, 2));
+                        min = Integer.parseInt(timeString.substring(4, 5));
                     }
                 },
                 hour, minute, true);
@@ -135,16 +151,19 @@ public class AddMenuActivity extends ActionBarActivity {
                 new DialogInterface.OnMultiChoiceClickListener() {
                     public void onClick(DialogInterface dialog, int which, boolean flag) {
 
+
                     }
                 });
         checkDlg.setPositiveButton("決定",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        int hour = 1;
-                        int min = 1;
-                        insert("a", hour, min, 1, 3);
-                        String b = search(1);
-                        Log.e("TAG",b);
+                        monday = asdf(chkSts[0]);
+                        tuesday = asdf(chkSts[1]);
+                        wednesday = asdf(chkSts[2]);
+                        thursday = asdf(chkSts[3]);
+                        friday = asdf(chkSts[4]);
+                        saturday = asdf(chkSts[5]);
+                        sunday = asdf(chkSts[6]);
                     }
                 });
         checkDlg.create().show();
@@ -156,28 +175,36 @@ public class AddMenuActivity extends ActionBarActivity {
 //
 //
 //    }
-    public void insert(String name, int hr, int min, int times, int date) {
+    public void insert(String name, int hr, int min, int times, String memo, int monday, int tuesday, int wednesday, int thursday, int friday, int saturday, int sunday) {
         ContentValues val = new ContentValues();
         val.put("name", name);
         val.put("hr", hr);
         val.put("min", min);
         val.put("times", times);
-        val.put("date", date);
-        db.insert(TABLE_NAME, null, val);
-        pref = getSharedPreferences("idnum", MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        int a = pref.getInt("idnum", 0);
-        a++;
-        editor.putInt("idnum", a);
-        editor.commit();
+        val.put("memo", memo);
+        val.put("monday", monday);
+        val.put("tuesday", tuesday);
+        val.put("wednesday", wednesday);
+        val.put("thursday", thursday);
+        val.put("friday", friday);
+        val.put("saturday", saturday);
+        val.put("sunday", sunday);
+        MainActivity.db.insert(TABLE_NAME, null, val);
+//        pref = getSharedPreferences("idnum", MODE_PRIVATE);
+//        SharedPreferences.Editor editor = pref.edit();
+//        int a = pref.getInt("idnum", 0);
+//        a++;
+//        editor.putInt("idnum", a);
+//        editor.commit();
     }
+
     public String search(int idnum) {
         Cursor cursor = null;
         String result = "";
 
         try {
             cursor = db.query(TABLE_NAME,
-                    new String[]{"name", "hr", "min", "times", "date"},
+                    new String[]{"name", "hr", "min", "times", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"},
                     "id = ?", new String[]{"" + idnum},
                     null, null, null);
 
@@ -201,5 +228,14 @@ public class AddMenuActivity extends ActionBarActivity {
             }
         }
         return result;
+    }
+    public int asdf(boolean tf){
+        int h;
+        if(tf){
+            h = 0;
+        }else{
+            h = 1;
+        }
+        return h;
     }
 }

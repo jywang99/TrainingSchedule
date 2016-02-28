@@ -49,6 +49,7 @@ public class MenuFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.menufragment, container, false);
         View button = view.findViewById(R.id.plusbutton);
+        View reload = view.findViewById(R.id.button5);
 
         menu = new ArrayList();
 
@@ -62,10 +63,17 @@ public class MenuFragment extends Fragment {
             }
         });
 
-//        for(int i = 0;i<1;i++){
-//            menu.add(search(1));
-//
-//        }
+        reload.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View V){
+                for(int i = 0;i<1;i++){
+                    menu.add(search(1));
+
+                }
+            }
+        });
+
+
 
         ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, menu);
         ListView listView = (ListView) view.findViewById(R.id.listView);
@@ -79,7 +87,7 @@ public class MenuFragment extends Fragment {
 
         try {
             cursor = db.query(TABLE_NAME,
-                    new String[]{"id","name", "hr", "min", "times", "date"},
+                    new String[]{"name", "hr", "min", "times", "date", "memo"},
                     "id = ?", new String[]{"" + idnum},
                     null, null, null);
 
@@ -88,6 +96,7 @@ public class MenuFragment extends Fragment {
             int indexMin = cursor.getColumnIndex("min");
             int indexTimes = cursor.getColumnIndex("times");
             int indexDate = cursor.getColumnIndex("date");
+            int indexMemo = cursor.getColumnIndex("memo");
 
             while (cursor.moveToNext()) {
                 String name = cursor.getString(indexName);
@@ -95,7 +104,8 @@ public class MenuFragment extends Fragment {
                 int min = cursor.getInt(indexMin);
                 int times = cursor.getInt(indexTimes);
                 int date = cursor.getInt(indexDate);
-                result += date + "の" + hr + "時" + min + "分" + "から、" + name + "を" + times + "回やる！";
+                String memo = cursor.getString(indexMemo);
+                result += date + " " + hr + "時" + min + "分" + "~ " + name +" "+ times + "回" + "(" + memo + ")";
             }
         } finally {
             if (cursor != null) {
@@ -104,5 +114,4 @@ public class MenuFragment extends Fragment {
         }
         return result;
     }
-
 }

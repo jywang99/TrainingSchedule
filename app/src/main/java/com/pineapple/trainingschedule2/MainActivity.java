@@ -19,18 +19,22 @@ import com.pineapple.trainingschedule2.R;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class MainActivity extends FragmentActivity {
-
     ViewPager pager;
     MyPagerAdapter adapter;
     PagerSlidingTabStrip tabs;
     Toolbar toolbar;
     TextView[] textview;
     int number = 0;
+    MySQLiteOpenHelper mySQLiteOpenHelper;
+    static SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mySQLiteOpenHelper = new MySQLiteOpenHelper(getApplicationContext());
+        db = mySQLiteOpenHelper.getWritableDatabase();
 
         pager = (ViewPager) findViewById(R.id.pager);
         adapter = new MyPagerAdapter(getSupportFragmentManager());
